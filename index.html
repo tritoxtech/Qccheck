@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Open the correct TritoX FIQ quality-control system for each project.">
+  <title>TritoX FIQ QC Hub</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080a0f;
+      --surface: #111520;
+      --surface-2: #171c2c;
+      --border: #29334e;
+      --text: #e8eefc;
+      --muted: #8a97bb;
+      --cyan: #00d4ff;
+      --blue: #1686ff;
+      --violet: #7b2fff;
+      --green: #00e887;
+      --shadow: 0 30px 90px rgba(0, 0, 0, .42);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-height: 100%; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(ellipse 70% 46% at 50% -12%, rgba(22, 134, 255, .13), transparent 72%),
+        radial-gradient(circle at 91% 10%, rgba(123, 47, 255, .09), transparent 26%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button, select { font: inherit; }
+
+    .shell {
+      width: min(1152px, calc(100% - 40px));
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    header {
+      min-height: 126px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 1px solid rgba(138, 151, 187, .2);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .mark {
+      width: 52px;
+      height: 52px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 15px;
+      background: linear-gradient(145deg, var(--blue), var(--violet));
+      box-shadow: 0 12px 32px rgba(22, 134, 255, .28);
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -.05em;
+    }
+
+    .brand-name {
+      margin: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--blue), #9a5cff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .live {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border: 1px solid rgba(138, 151, 187, .2);
+      border-radius: 999px;
+      background: rgba(23, 28, 44, .75);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(0, 232, 135, .8);
+    }
+
+    main {
+      display: grid;
+      place-items: center;
+      padding: 64px 0;
+    }
+
+    .panel {
+      position: relative;
+      width: min(760px, 100%);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: linear-gradient(145deg, rgba(23, 28, 44, .95), rgba(13, 16, 25, .98));
+      box-shadow: var(--shadow);
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--blue), var(--violet));
+    }
+
+    .panel-inner {
+      padding: 58px clamp(24px, 7vw, 74px) 62px;
+      text-align: center;
+    }
+
+    .symbol {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 25px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(0, 212, 255, .2);
+      border-radius: 21px;
+      background: rgba(0, 133, 255, .08);
+      color: var(--cyan);
+      font-size: 30px;
+      font-weight: 900;
+      box-shadow: inset 0 0 24px rgba(0, 133, 255, .06);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.15;
+      letter-spacing: -.035em;
+    }
+
+    .intro {
+      margin: 13px auto 34px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .chooser { text-align: left; }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      color: #aab6d3;
+      font-size: 14px;
+      font-weight: 750;
+      letter-spacing: .035em;
+    }
+
+    .select-wrap { position: relative; }
+
+    select {
+      width: 100%;
+      min-height: 58px;
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      outline: none;
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 0 52px 0 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    select:hover { border-color: #3d4b70; }
+
+    select:focus-visible {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 4px rgba(0, 212, 255, .12);
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 19px;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: translateY(-70%) rotate(45deg);
+    }
+
+    .open-button {
+      width: 100%;
+      min-height: 56px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 13px;
+      background: linear-gradient(115deg, var(--blue), var(--violet));
+      color: white;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(22, 134, 255, .22);
+      transition: transform .18s ease, filter .18s ease, opacity .18s ease;
+    }
+
+    .open-button:not(:disabled):hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+
+    .open-button:focus-visible {
+      outline: 3px solid rgba(0, 212, 255, .42);
+      outline-offset: 3px;
+    }
+
+    .open-button:disabled {
+      opacity: .42;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .selection-status {
+      min-height: 24px;
+      margin: 17px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .selection-status.ready { color: var(--green); }
+
+    footer {
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-top: 1px solid rgba(138, 151, 187, .18);
+      color: #526080;
+      font-size: 12px;
+    }
+
+    .footer-brand {
+      color: var(--cyan);
+      font-weight: 850;
+      letter-spacing: .14em;
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 28px, 1152px); }
+      header { min-height: 108px; }
+      .brand-subtitle { letter-spacing: .08em; }
+      .live { padding: 8px 10px; }
+      .live-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+      main { padding: 38px 0; }
+      .panel-inner { padding: 44px 20px 45px; }
+      footer { min-height: 78px; justify-content: center; text-align: center; }
+      footer span:last-child { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand" aria-label="TritoX">
+        <div class="mark" aria-hidden="true">T</div>
+        <div>
+          <p class="brand-name">TRITOX</p>
+          <p class="brand-subtitle">FIQ Quality Control Hub</p>
+        </div>
+      </div>
+
+      <div class="live" aria-label="All project links are ready">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="live-label">Live</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel" aria-labelledby="page-title">
+        <div class="panel-inner">
+          <div class="symbol" aria-hidden="true">QC</div>
+          <h1 id="page-title">Open Project QC</h1>
+          <p class="intro">Select the FIQ project you want to check.</p>
+
+          <form id="project-form" class="chooser">
+            <label for="project-select">FIQ project</label>
+            <div class="select-wrap">
+              <select id="project-select" required>
+                <option value="" selected disabled>Choose a project</option>
+                <option value="https://saravanabala-tritox.github.io/Homequotes/">Vlad FIQ</option>
+                <option value="https://tritoxtech.github.io/Aaron/">Aaron FIQ</option>
+                <option value="https://saravanatritox-cloud.github.io/robert/">Robert FIQ</option>
+              </select>
+              <span class="select-arrow" aria-hidden="true"></span>
+            </div>
+
+            <button id="open-button" class="open-button" type="submit" disabled>
+              Open Selected QC
+            </button>
+            <p id="selection-status" class="selection-status" aria-live="polite">
+              Choose a project to continue.
+            </p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span class="footer-brand">TRITOX QC</span>
+      <span>Each project opens its dedicated quality-control system.</span>
+    </footer>
+  </div>
+
+  <script>
+    const projectSelect = document.getElementById('project-select');
+    const openButton = document.getElementById('open-button');
+    const status = document.getElementById('selection-status');
+    const form = document.getElementById('project-form');
+
+    projectSelect.addEventListener('change', () => {
+      const selectedName = projectSelect.options[projectSelect.selectedIndex].text;
+      openButton.disabled = !projectSelect.value;
+      status.textContent = projectSelect.value
+        ? `${selectedName} is ready to open.`
+        : 'Choose a project to continue.';
+      status.classList.toggle('ready', Boolean(projectSelect.value));
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (projectSelect.value) window.location.assign(projectSelect.value);
+    });
+  </script>
+</body>
+</html>
